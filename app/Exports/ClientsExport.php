@@ -16,7 +16,8 @@ class ClientsBalanceExport implements FromCollection
         return Client::withSum('orders', 'total_amount')
             ->withSum('payments', 'amount')
             // استخدمنا DESC للترتيب التنازلي بناءً على الرصيد
-            ->orderByRaw('(IFNULL(orders_sum_total_amount, 0) - IFNULL(payments_sum_amount, 0)) DESC')
+            // ->orderByRaw('(IFNULL(orders_sum_total_amount, 0) - IFNULL(payments_sum_amount, 0)) DESC')
+            ->orderByRaw('(COALESCE((SELECT SUM(total_amount) FROM orders WHERE orders.client_id = clients.id), 0) - COALESCE((SELECT SUM(amount) FROM payments WHERE payments.client_id = clients.id), 0)) DESC')
             ->get();
     }
     

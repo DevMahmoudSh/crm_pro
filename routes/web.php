@@ -59,7 +59,8 @@ Route::middleware('auth')->group(function () {
         // جلب البيانات مع حساب الرصيد والترتيب التصاعدي
         $clients = Client::withSum('orders', 'total_amount')
             ->withSum('payments', 'amount')
-            ->orderByRaw('(IFNULL(orders_sum_total_amount, 0) - IFNULL(payments_sum_amount, 0)) DESC')
+            // ->orderByRaw('(IFNULL(orders_sum_total_amount, 0) - IFNULL(payments_sum_amount, 0)) DESC')
+            ->orderByRaw('(COALESCE((SELECT SUM(total_amount) FROM orders WHERE orders.client_id = clients.id), 0) - COALESCE((SELECT SUM(amount) FROM payments WHERE payments.client_id = clients.id), 0)) DESC')
             ->get();
 
         // إعدادات mPDF لدعم اللغة العربية تلقائياً

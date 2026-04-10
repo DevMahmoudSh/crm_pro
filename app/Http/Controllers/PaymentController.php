@@ -182,7 +182,8 @@ class PaymentController extends Controller
                 // إضافة منطق الترتيب (Sorting) الخاص بـ DataTables للرصيد
                 ->orderColumn('balance', function ($query, $order) {
                     // الترتيب باستخدام ناتج طرح (إجمالي الطلبات - إجمالي المدفوعات)
-                    $query->orderByRaw('(IFNULL(orders_sum_total_amount, 0) - IFNULL(payments_sum_amount, 0)) ' . $order);
+                    // $query->orderByRaw('(IFNULL(orders_sum_total_amount, 0) - IFNULL(payments_sum_amount, 0)) ' . $order);
+                    $query->orderByRaw('(COALESCE((SELECT SUM(total_amount) FROM orders WHERE orders.client_id = clients.id), 0) - COALESCE((SELECT SUM(amount) FROM payments WHERE payments.client_id = clients.id), 0)) DESC');
                 })
                 ->addColumn('last_transaction', function ($row) {
                     $last_order = $row->latestOrder ? $row->latestOrder->created_at : null;
