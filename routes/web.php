@@ -119,11 +119,11 @@ Route::get('/import-from-files', function () {
     // كود الاستيراد من الملفات الخاص بك...
 });
 */
-Route::get('/setup-db', function () {
-    try {
-        Artisan::call('migrate', ['--force' => true]);
-        return 'تم إنشاء جداول قاعدة البيانات بنجاح! يمكنك الآن العودة للصفحة الرئيسية.';
-    } catch (\Exception $e) {
-        return 'حدث خطأ: ' . $e->getMessage();
-    }
-});
+// Route::get('/setup-db', function () {
+//     try {
+//         Artisan::call('migrate', ['--force' => true]);
+//         return 'تم إنشاء جداول قاعدة البيانات بنجاح! يمكنك الآن العودة للصفحة الرئيسية.';
+//     } catch (\Exception $e) {
+//         return 'حدث خطأ: ' . $e->getMessage();
+//     }
+// });
