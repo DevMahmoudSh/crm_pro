@@ -1,0 +1,390 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Client and Order Management System">
+    <title>Client & Order Manager</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="font/fonts/bootstrap-icons.css">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="css/dataTables.bootstrap5.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top" role="navigation" aria-label="Main navigation">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" aria-label="Client and Order Manager">
+                <i class="bi bi-clipboard-data"></i> Client & Order Manager
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#dashboard" aria-current="page">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#clients">
+                            <i class="bi bi-people"></i> Clients
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#orders">
+                            <i class="bi bi-cart"></i> Orders
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dataDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-database"></i> Data
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dataDropdown">
+                            <li><a class="dropdown-item" href="#" id="exportBtn">
+                                <i class="bi bi-download"></i> Export Data
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#importModal">
+                                <i class="bi bi-upload"></i> Import Data
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container-fluid py-4" role="main">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="mb-5" aria-labelledby="dashboard-heading">
+            <h2 id="dashboard-heading" class="mb-4">Dashboard</h2>
+            
+            <!-- Stats Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card text-white bg-success h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-cash-coin"></i> Total Paid
+                            </h5>
+                            <p class="card-text display-6" id="totalPaid" aria-live="polite">$0.00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card text-white bg-warning h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-clock-history"></i> Total Unpaid
+                            </h5>
+                            <p class="card-text display-6" id="totalUnpaid" aria-live="polite">$0.00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card text-white bg-info h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-calendar-check"></i> Today's Profit
+                            </h5>
+                            <p class="card-text display-6" id="dailyProfit" aria-live="polite">$0.00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card text-white bg-primary h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-receipt"></i> Total Orders
+                            </h5>
+                            <p class="card-text display-6" id="totalOrders" aria-live="polite">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">7-Day Payment Trends</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="paymentsChart" role="img" aria-label="7-day payment trends chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Clients Section -->
+        <section id="clients" class="mb-5" aria-labelledby="clients-heading">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 id="clients-heading">Clients</h2>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clientModal" id="addClientBtn" aria-label="Add new client">
+                    <i class="bi bi-plus-circle"></i> Add Client
+                </button>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="clientsTable" class="table table-hover" aria-label="Clients table">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-label="Name">Name</th>
+                                    <th scope="col" data-label="Phone">Phone</th>
+                                    <th scope="col" data-label="Created">Created</th>
+                                    <th scope="col" data-label="Actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Orders Section -->
+        <section id="orders" class="mb-5" aria-labelledby="orders-heading">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 id="orders-heading">Orders</h2>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#orderModal" id="addOrderBtn" aria-label="Add new order">
+                    <i class="bi bi-plus-circle"></i> Add Order
+                </button>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="ordersTable" class="table table-hover" aria-label="Orders table">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-label="Client">Client</th>
+                                    <th scope="col" data-label="Details">Details</th>
+                                    <th scope="col" data-label="Amount">Amount</th>
+                                    <th scope="col" data-label="Payment Method">Payment Method</th>
+                                    <th scope="col" data-label="Payment Status">Payment Status</th>
+                                    <th scope="col" data-label="Order Stage">Order Stage</th>
+                                    <th scope="col" data-label="Created">Created</th>
+                                    <th scope="col" data-label="Actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Client Modal -->
+    <div class="modal fade" id="clientModal" tabindex="-1" aria-labelledby="clientModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="clientModalLabel">Add Client</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="clientForm" novalidate>
+                    <div class="modal-body">
+                        <input type="hidden" id="clientId">
+                        <div class="mb-3">
+                            <label for="clientName" class="form-label">Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="clientName" required aria-required="true" autofocus>
+                            <div class="invalid-feedback">Please enter a client name.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="clientPhone" class="form-label">Phone</label>
+                            <input type="tel" class="form-control" id="clientPhone" minlength="10" maxlength="10">
+                        </div>
+                        <!-- <div class="mb-3">
+                            <label for="clientAddress" class="form-label">Address</label>
+                            <textarea class="form-control" id="clientAddress" rows="3"></textarea>
+                        </div> -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Client</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Modal -->
+    <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderModalLabel">Add Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="orderForm" novalidate>
+                    <div class="modal-body">
+                        <input type="hidden" id="orderId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="orderClient" class="form-label">Client <span class="text-danger">*</span></label>
+                                <input type="hidden" id="orderClient">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="selectedClientName" readonly placeholder="Click to select a client..." aria-required="true">
+                                    <button class="btn btn-outline-primary" type="button" id="selectClientBtn">
+                                        <i class="bi bi-search"></i> Select
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback">Please select a client.</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="orderAmount" class="form-label">Amount <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="orderAmount" step="0.01" min="0" required aria-required="true">
+                                <div class="invalid-feedback">Please enter a valid amount.</div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="orderDetails" class="form-label">Order Details <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="orderDetails" rows="3" required aria-required="true"></textarea>
+                            <div class="invalid-feedback">Please enter order details.</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="orderPaymentMethod" class="form-label">Payment Method <span class="text-danger">*</span></label>
+                                <select class="form-select" id="orderPaymentMethod" required aria-required="true">
+                                    <option value="">Select...</option>
+                                    <option value="cash">Cash</option>
+                                    <option value="app">App</option>
+                                </select>
+                                <div class="invalid-feedback">Please select a payment method.</div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="orderPaymentStatus" class="form-label">Payment Status <span class="text-danger">*</span></label>
+                                <select class="form-select" id="orderPaymentStatus" required aria-required="true">
+                                    <option value="">Select...</option>
+                                    <option value="paid">Paid</option>
+                                    <option value="deferred">Deferred</option>
+                                </select>
+                                <div class="invalid-feedback">Please select a payment status.</div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="orderStage" class="form-label">Order Stage <span class="text-danger">*</span></label>
+                                <select class="form-select" id="orderStage" required aria-required="true">
+                                    <option value="">Select...</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="ready">Ready</option>
+                                    <option value="received">Received</option>
+                                </select>
+                                <div class="invalid-feedback">Please select an order stage.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="importModalLabel">Import Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="importForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="importFile" class="form-label">Select JSON File <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" id="importFile" accept=".json" required aria-required="true">
+                            <div class="form-text">Choose a JSON file exported from this application.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Import Mode <span class="text-danger">*</span></label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="importMode" id="importMerge" value="merge" checked>
+                                <label class="form-check-label" for="importMerge">
+                                    Merge with existing data
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="importMode" id="importReplace" value="replace">
+                                <label class="form-check-label" for="importReplace">
+                                    Replace all existing data
+                                </label>
+                            </div>
+                        </div>
+                        <div id="importAlert" class="alert d-none" role="alert"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Import Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client Selection Modal -->
+    <div class="modal fade" id="clientSelectionModal" tabindex="-1" aria-labelledby="clientSelectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="clientSelectionModalLabel">Select Client</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table id="clientSelectionTable" class="table table-hover table-sm" aria-label="Client selection table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Phone</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientSelectionTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light py-3 mt-5">
+        <div class="container text-center text-muted">
+            <small>&copy; 2024 Client & Order Manager. All data stored locally in your browser.</small>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="js/jquery.dataTables.min.js"></script>
+    <script src="js/dataTables.bootstrap5.min.js"></script>
+    <!-- Chart.js -->
+    <script src="dist/chart.umd.min.js"></script>
+    <!-- Custom JS -->
+    <script src="app.js"></script>
+</body>
+</html>
+
+
