@@ -2,6 +2,8 @@
 
 use Mpdf\Mpdf;
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as PDF;
+//just for hidden url for db create for render
+use Illuminate\Support\Facades\Artisan;
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientController;
@@ -117,3 +119,11 @@ Route::get('/import-from-files', function () {
     // كود الاستيراد من الملفات الخاص بك...
 });
 */
+Route::get('/setup-db', function () {
+    try {
+        Artisan::call('migrate', ['--force' => true]);
+        return 'تم إنشاء جداول قاعدة البيانات بنجاح! يمكنك الآن العودة للصفحة الرئيسية.';
+    } catch (\Exception $e) {
+        return 'حدث خطأ: ' . $e->getMessage();
+    }
+});
